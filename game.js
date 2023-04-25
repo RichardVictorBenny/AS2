@@ -33,8 +33,11 @@ function move() {
 	var positionTop = player.offsetTop;
 	if (downPressed) {
 		var newTop = positionTop + 1;
+		var element = document.elementFromPoint(player.offsetLeft,newTop+46);
 
-		player.style.top = newTop + 'px';
+		if (element.classList.contains('cactus') == false) {
+			player.style.top = newTop + 'px';
+		}
 
 		if (leftPressed == false) {
 			if (rightPressed == false) {
@@ -44,8 +47,11 @@ function move() {
 	}
 	if (upPressed) {
 		var newTop = positionTop - 1;
+		var element = document.elementFromPoint(player.offsetLeft,newTop);
 
-		player.style.top = newTop + 'px';
+		if (element.classList.contains('cactus') == false) {
+			player.style.top = newTop + 'px';
+		}
 
 		if (leftPressed == false) {
 			if (rightPressed == false) {
@@ -55,17 +61,23 @@ function move() {
 	}
 	if (leftPressed) {
 		var newLeft = positionLeft - 1;
-
-		player.style.left = newLeft + 'px';
-
 		player.className = 'character walk left';
+		var element = document.elementFromPoint(newLeft,player.offsetTop);
+
+		if (element.classList.contains('cactus') == false) {
+			player.style.left = newLeft + 'px';
+			//player.className = 'character stand left';
+		}
 	}
 	if (rightPressed) {
 		var newLeft = positionLeft + 1;
-
-		player.style.left = newLeft + 'px';
-
 		player.className = 'character walk right';
+		var element = document.elementFromPoint(newLeft+32,player.offsetTop);
+
+		if (element.classList.contains('cactus') == false) {
+			player.style.left = newLeft + 'px';
+		}
+
 	}
 
 }
@@ -90,12 +102,12 @@ function keydown(event) {
 function myLoadFunction() {
 	
 
-	var start = document.getElementById('start');
+	var start = document.getElementsByClassName('start')[0];
 	start.addEventListener('click',startGame);
 }
 
 function startGame() {
-	var start = document.getElementById('start');
+	var start = document.getElementsByClassName('start')[0];
 	start.style.display = 'none';
 
 	timeout = setInterval(move, 10);
