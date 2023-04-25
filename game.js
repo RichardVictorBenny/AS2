@@ -33,48 +33,46 @@ function move() {
 	var positionTop = player.offsetTop;
 	if (downPressed) {
 		var newTop = positionTop + 1;
-		var element = document.elementFromPoint(player.offsetLeft,newTop+46);
+		let elementL = document.elementFromPoint(player.offsetLeft,newTop+46);
+		let elementR = document.elementFromPoint(player.offsetLeft+32,newTop+46);
 
-		if (element.classList.contains('cactus') == false) {
+
+		if ((elementL.classList.contains('solid') == false) && (elementR.classList.contains('solid')==false)) {
 			player.style.top = newTop + 'px';
 		}
 
-		if (leftPressed == false) {
-			if (rightPressed == false) {
-				player.className = 'character walk down';
-			}
-		}
+		animation('character walk down')
 	}
 	if (upPressed) {
 		var newTop = positionTop - 1;
-		var element = document.elementFromPoint(player.offsetLeft,newTop);
+		let elementL = document.elementFromPoint(player.offsetLeft,newTop);
+		let elementR = document.elementFromPoint(player.offsetLeft+32,newTop);
 
-		if (element.classList.contains('cactus') == false) {
+		if ((elementL.classList.contains('solid') == false) && (elementR.classList.contains('solid')==false)) {
 			player.style.top = newTop + 'px';
 		}
 
-		if (leftPressed == false) {
-			if (rightPressed == false) {
-				player.className = 'character walk up';
-			}
-		}
+		animation('character walk up')
+		
 	}
 	if (leftPressed) {
 		var newLeft = positionLeft - 1;
 		player.className = 'character walk left';
-		var element = document.elementFromPoint(newLeft,player.offsetTop);
+		let elementL = document.elementFromPoint(newLeft,player.offsetTop);
+		let elementR = document.elementFromPoint(newLeft,player.offsetTop+46);
 
-		if (element.classList.contains('cactus') == false) {
+		if ((elementL.classList.contains('solid') == false) && (elementR.classList.contains('solid')==false)) {
 			player.style.left = newLeft + 'px';
-			//player.className = 'character stand left';
 		}
 	}
 	if (rightPressed) {
 		var newLeft = positionLeft + 1;
 		player.className = 'character walk right';
-		var element = document.elementFromPoint(newLeft+32,player.offsetTop);
+		let elementL = document.elementFromPoint(newLeft+32,player.offsetTop);
+		let elementR = document.elementFromPoint(newLeft+32,player.offsetTop+46);
 
-		if (element.classList.contains('cactus') == false) {
+
+		if ((elementL.classList.contains('solid') == false) && (elementR.classList.contains('solid')==false)) {
 			player.style.left = newLeft + 'px';
 		}
 
@@ -98,6 +96,15 @@ function keydown(event) {
 	}
 }
 
+
+function  animation(que){
+	if (leftPressed == false) {
+		if (rightPressed == false) {
+			player.className = que;
+		}
+	}
+
+}
 
 function myLoadFunction() {
 	
