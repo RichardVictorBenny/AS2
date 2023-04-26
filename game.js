@@ -33,49 +33,27 @@ function move() {
 	var positionTop = player.offsetTop;
 	if (downPressed) {
 		var newTop = positionTop + 1;
-		let elementL = document.elementFromPoint(player.offsetLeft,newTop+46);
-		let elementR = document.elementFromPoint(player.offsetLeft+32,newTop+46);
 
-
-		if ((elementL.classList.contains('solid') == false) && (elementR.classList.contains('solid')==false)) {
-			player.style.top = newTop + 'px';
-		}
-
-		animation('character walk down')
+		solidCheckUpDown(player.offsetLeft, newTop + 46,newTop);
+		animation('character walk down');
 	}
 	if (upPressed) {
 		var newTop = positionTop - 1;
-		let elementL = document.elementFromPoint(player.offsetLeft,newTop);
-		let elementR = document.elementFromPoint(player.offsetLeft+32,newTop);
 
-		if ((elementL.classList.contains('solid') == false) && (elementR.classList.contains('solid')==false)) {
-			player.style.top = newTop + 'px';
-		}
-
-		animation('character walk up')
-		
+		solidCheckUpDown(player.offsetLeft,newTop,newTop);
+		animation('character walk up');
 	}
 	if (leftPressed) {
 		var newLeft = positionLeft - 1;
 		player.className = 'character walk left';
-		let elementL = document.elementFromPoint(newLeft,player.offsetTop);
-		let elementR = document.elementFromPoint(newLeft,player.offsetTop+46);
 
-		if ((elementL.classList.contains('solid') == false) && (elementR.classList.contains('solid')==false)) {
-			player.style.left = newLeft + 'px';
-		}
+		solidCheckLeftRight(newLeft,player.offsetTop,newLeft);
 	}
 	if (rightPressed) {
 		var newLeft = positionLeft + 1;
 		player.className = 'character walk right';
-		let elementL = document.elementFromPoint(newLeft+32,player.offsetTop);
-		let elementR = document.elementFromPoint(newLeft+32,player.offsetTop+46);
 
-
-		if ((elementL.classList.contains('solid') == false) && (elementR.classList.contains('solid')==false)) {
-			player.style.left = newLeft + 'px';
-		}
-
+		solidCheckLeftRight(newLeft + 32, player.offsetTop,newLeft);
 	}
 
 }
@@ -97,7 +75,7 @@ function keydown(event) {
 }
 
 
-function  animation(que){
+function animation(que) {
 	if (leftPressed == false) {
 		if (rightPressed == false) {
 			player.className = que;
@@ -106,12 +84,25 @@ function  animation(que){
 
 }
 
-function myLoadFunction() {
-	
+function solidCheckUpDown(x, y,newTop) {
+	let elementL = document.elementFromPoint(x, y);
+	let elementR = document.elementFromPoint(x + 32, y);
 
-	var start = document.getElementsByClassName('start')[0];
-	start.addEventListener('click',startGame);
+	if ((elementL.classList.contains('solid') == false) && (elementR.classList.contains('solid') == false)) {
+		player.style.top = newTop  + 'px';
+	}
 }
+
+function solidCheckLeftRight(x, y,newLeft) {
+	let elementL = document.elementFromPoint(x, y);
+	let elementR = document.elementFromPoint(x, y + 46);
+
+	if ((elementL.classList.contains('solid') == false) && (elementR.classList.contains('solid') == false)) {
+		player.style.left = newLeft + 'px';
+	}
+}
+
+
 
 function startGame() {
 	var start = document.getElementsByClassName('start')[0];
@@ -120,6 +111,13 @@ function startGame() {
 	timeout = setInterval(move, 10);
 	document.addEventListener('keydown', keydown);
 	document.addEventListener('keyup', keyup);
+}
+
+function myLoadFunction() {
+
+
+	var start = document.getElementsByClassName('start')[0];
+	start.addEventListener('click', startGame);
 }
 
 
