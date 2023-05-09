@@ -4,7 +4,7 @@ var leftPressed = false;
 var rightPressed = false;
 var lastPressed = false;
 var tanks = 0;
-var bomb = 0;
+/* var bomb = 0; */
 var tankNumber = 3;
 
 function keyup(event) {
@@ -36,8 +36,7 @@ function move() {
 	var positionTop = player.offsetTop;
 	if (downPressed) {
 		var newTop = positionTop + 1;
-
-		solidCheckUpDown(player.offsetLeft, newTop + 46, newTop);
+		solidCheckUpDown(positionLeft, newTop + 46, newTop);
 		animation('character walk down');
 	}
 	if (upPressed) {
@@ -110,35 +109,39 @@ function makeTanks() {
 	tank.className = 'tank';
 	tank.classList.add('solid');
 	document.body.appendChild(tank);
-}
 
-function makeBomb(i, tanks) {
+	var randomTop = Math.ceil(Math.random() * 9);
+	tank.style.top = randomTop + '0vh';
 
-}
+	/* var bomb = document.createElement('div');
+	bomb.className = 'bomb';
+	bomb.style.left = tank.offsetLeft + 'px';
+	bomb.style.top = tank.offsetTop + 10 + 'px';
+	document.body.appendChild(bomb);
 
-function positionTank() {
-	var tanks = document.getElementsByClassName('tank');
-	for (var i = 0; i < tanks.length; i++) {
-		var randomTop = Math.ceil(Math.random() * 9);
-		tankLeft = tanks[i].offsetLeft;
-		tanks[i].style.top = randomTop + '0vh';
-		//tankPositionCheck(i, randomTop,tankLeft);
+	moveBomb(bomb); */
 
-		setInterval(function (i) {
-			var bomb = document.createElement('div');
-			bomb.className = 'bomb';
 
-			bomb.style.top = tanks[i].offsetTop + 10 + 'px';
-			bomb.style.left = tanks[i].offsetLeft + 'px';
-			document.body.appendChild(bomb);
-			
-		}, 3000);
+
+
+
+	setInterval(function () {		//making bombs 
+		var bomb = document.createElement('div');
+		bomb.className = 'bomb';
+		bomb.style.left = tank.offsetLeft + 'px';
+		bomb.style.top = tank.offsetTop + 10 + 'px';
+		document.body.appendChild(bomb);
 
 		moveBomb(bomb);
+	}, 4000)
 
-	}
+
+
+
 
 }
+
+
 
 function moveBomb(bomb) {
 	var left = bomb.offsetLeft;
@@ -147,13 +150,19 @@ function moveBomb(bomb) {
 		if (bomb.offsetLeft > 0) {
 			bomb.style.left = left + 'px';
 		} else {
-			/* bomb.style.left = '0px'; */
 			bomb.className = 'explosion';
-			/* bomb.parentNode.removeChild(bomb) */
-			/* setInterval(,1000) */
+
+
 		}
 	}, 10);
+
 }
+
+function removeBomb() {
+
+}
+
+
 
 //	--------some errors; under development-----------
 function tankPositionCheck(i, randomTop, tankLeft) {
@@ -179,7 +188,13 @@ function startGame() {
 	for (let i = 0; i < tankNumber; i++) {
 		makeTanks();
 	}
-	positionTank();
+
+	setInterval(function () {
+		var explodedBomb = document.getElementsByClassName('explosion');
+		for (var i = 0; i < explodedBomb.length; i++) {
+			document.body.removeChild(explodedBomb[i]);
+		}
+	}, 3000)
 
 }
 
