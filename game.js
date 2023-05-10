@@ -3,6 +3,7 @@ var downPressed = false;
 var leftPressed = false;
 var rightPressed = false;
 var lastPressed = false;
+
 var tanks = 0;
 /* var bomb = 0; */
 var tankNumber = 3;
@@ -30,37 +31,6 @@ function keyup(event) {
 }
 
 
-function move() {
-	var player = document.getElementById('player');
-	var positionLeft = player.offsetLeft;
-	var positionTop = player.offsetTop;
-	if (downPressed) {
-		var newTop = positionTop + 1;
-		solidCheckUpDown(positionLeft, newTop + 46, newTop);
-		animation('character walk down');
-	}
-	if (upPressed) {
-		var newTop = positionTop - 1;
-
-		solidCheckUpDown(player.offsetLeft, newTop, newTop);
-		animation('character walk up');
-	}
-	if (leftPressed) {
-		var newLeft = positionLeft - 1;
-		player.className = 'character walk left';
-
-		solidCheckLeftRight(newLeft, player.offsetTop, newLeft);
-	}
-	if (rightPressed) {
-		var newLeft = positionLeft + 1;
-		player.className = 'character walk right';
-
-		solidCheckLeftRight(newLeft + 32, player.offsetTop, newLeft);
-	}
-
-}
-
-
 function keydown(event) {
 	if (event.keyCode == 37) {
 		leftPressed = true;
@@ -76,6 +46,59 @@ function keydown(event) {
 	}
 }
 
+function move() {
+	var player = document.getElementById('player');
+	positionLeft = player.offsetLeft;
+	positionTop = player.offsetTop;
+	playerW = player.offsetWidth;
+	playerH = player.offsetHeight;
+
+	if (downPressed) {
+		var newTop = positionTop + 1;
+
+		let check = collision(newTop, positionLeft, 'solid', playerW, playerH);
+		if (check) {
+			player.style.top = newTop + 'px';
+		}
+
+		animation('character walk down');
+	}
+	if (upPressed) {
+		var newTop = positionTop - 1;
+
+		let check = collision(newTop, positionLeft, 'solid', playerW, playerH);
+		if (check) {
+			player.style.top = newTop + 'px';
+		}
+
+		animation('character walk up');
+	}
+	if (leftPressed) {
+		var newLeft = positionLeft - 1;
+		player.className = 'character walk left';
+
+		let check = collision(positionTop, newLeft, 'solid', playerW, playerH);
+		if (check) {
+			player.style.left = newLeft + 'px';
+
+		}
+
+
+	}
+	if (rightPressed) {
+		var newLeft = positionLeft + 1;
+		player.className = 'character walk right';
+
+		let check = collision(positionTop, newLeft, 'solid', playerW, playerH);
+		if (check) {
+			player.style.left = newLeft + 'px';
+
+		}
+
+	}
+
+}
+
 
 function animation(que) {
 	if (leftPressed == false) {
@@ -86,94 +109,122 @@ function animation(que) {
 
 }
 
-function solidCheckUpDown(x, y, newTop) {
-	let elementL = document.elementFromPoint(x, y);
-	let elementR = document.elementFromPoint(x + 32, y);
 
-	if ((elementL.classList.contains('solid') == false) && (elementR.classList.contains('solid') == false)) {
-		player.style.top = newTop + 'px';
-	}
-}
-
-function solidCheckLeftRight(x, y, newLeft) {
-	let elementL = document.elementFromPoint(x, y);
-	let elementR = document.elementFromPoint(x, y + 46);
-
-	if ((elementL.classList.contains('solid') == false) && (elementR.classList.contains('solid') == false)) {
-		player.style.left = newLeft + 'px';
-	}
-}
 
 function makeTanks() {
 	var tank = document.createElement('div');
 	tank.className = 'tank';
 	tank.classList.add('solid');
 	document.body.appendChild(tank);
-
-	var randomTop = Math.ceil(Math.random() * 9);
-	tank.style.top = randomTop + '0vh';
-
-	/* var bomb = document.createElement('div');
-	bomb.className = 'bomb';
-	bomb.style.left = tank.offsetLeft + 'px';
-	bomb.style.top = tank.offsetTop + 10 + 'px';
-	document.body.appendChild(bomb);
-
-	moveBomb(bomb); */
+	tank.style.top = Math.ceil(Math.random() * 100) + '%';
 
 
 
+}
 
+function positionTanks() {
+	var tanks = document.getElementsByClassName('tank');
 
-	setInterval(function () {		//making bombs 
+	for (var i = 0; i < tanks.length; i++) {
+		var random = Math.ceil(Math.random() * 95);
+		tanks[i].style.top = random + '%';
+
 		var bomb = document.createElement('div');
 		bomb.className = 'bomb';
-		bomb.style.left = tank.offsetLeft + 'px';
-		bomb.style.top = tank.offsetTop + 10 + 'px';
+		bomb.style.left = tanks[i].offsetLeft + 'px';
+		bomb.style.top = tanks[i].offsetTop + 10 + 'px';
 		document.body.appendChild(bomb);
 
 		moveBomb(bomb);
-	}, 4000)
 
-
-
-
-
+	}
 }
 
 
 
 function moveBomb(bomb) {
 	var left = bomb.offsetLeft;
+	var speed = Math.ceil(Math.random() * 10)
+	var fuseLength = Math.ceil(Math.random() * left)
 	setInterval(function () {
 		left--;
-		if (bomb.offsetLeft > 0) {
+		if (left > fuseLength) {
 			bomb.style.left = left + 'px';
 		} else {
 			bomb.className = 'explosion';
+			setTimeout(function () {
+				bomb.remove();
+			}, 2000);
+		}
 
+		var player = document.getElementById('player');
+		var check = collision(player.offsetLeft, player.offsetTop, 'explosion',player.offsetWidth,player.offsetHeight);
+
+		if (check) {
+			//gameOver();
+			gameOverTest();
 
 		}
-	}, 10);
+	}, speed);
 
 }
 
-function removeBomb() {
+function removeBomb(bomb) {
+	if (bomb.className == 'explosion') {
 
-}
-
-
-
-//	--------some errors; under development-----------
-function tankPositionCheck(i, randomTop, tankLeft) {
-
-	var newTankPosition = document.elementFromPoint(tankLeft, randomTop);
-	if (newTankPosition.classList.contains('tank') == false) {
-		tanks[i].style.top = randomTop + '0vh';
-	} else {
-		var newRandomTop = Math.ceil(Math.random() * 10);
-		tankPositionCheck(i, newRandomTop);
 	}
+}
+
+
+function collide(left, top, cls) {
+	var element = document.elementFromPoint(left, top);
+
+	if (element.classList.contains(cls)) {
+		return true;
+	}
+
+}
+
+function collision(top, left, cls, width, height) {
+	var topLeft = document.elementFromPoint(left, top);
+	var topRight = document.elementFromPoint(left + width, top);
+	var bottomLeft = document.elementFromPoint(left, top + height);
+	var bottomRight = document.elementFromPoint(left + width, top + height);
+
+	if ((topLeft.classList.contains(cls) == false) &&
+		(topRight.classList.contains(cls) == false) &&
+		(bottomLeft.classList.contains(cls) == false) &&
+		(bottomRight.classList.contains(cls) == false)) {
+
+		return true;
+
+	}
+
+
+
+
+}
+
+
+function gameOverTest() {
+	console.log('game over');
+}
+
+function gameOver() {
+	clearInterval(timeout);
+	document.removeEventListener('keydown', keydown);
+	document.removeEventListener('keyup', keyup);
+
+	player.classList.add('dead');
+
+	var bttn = document.getElementsByClassName('start')[0];
+	bttn.style.display = 'block';
+	bttn.firstChild.nodeValue = 'Game Over!!!';
+
+}
+
+function testing() {
+
 }
 
 
@@ -185,16 +236,12 @@ function startGame() {
 	document.addEventListener('keydown', keydown);
 	document.addEventListener('keyup', keyup);
 
-	for (let i = 0; i < tankNumber; i++) {
-		makeTanks();
-	}
 
-	setInterval(function () {
-		var explodedBomb = document.getElementsByClassName('explosion');
-		for (var i = 0; i < explodedBomb.length; i++) {
-			document.body.removeChild(explodedBomb[i]);
-		}
-	}, 3000)
+	setInterval(positionTanks, 3000);
+
+
+
+
 
 }
 
@@ -203,6 +250,12 @@ function myLoadFunction() {
 
 	var start = document.getElementsByClassName('start')[0];
 	start.addEventListener('click', startGame);
+	for (let i = 0; i < tankNumber; i++) {
+		makeTanks();
+	}
+
+	testing();
+
 }
 
 
