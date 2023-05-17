@@ -442,6 +442,47 @@ aside ul {list-style-type: none; margin-left: 0; padding-left: 0; margin-bottom:
 	transform: rotate(180deg)
 }
 
+.scoreCard {
+	font-family: 'Anton';
+	text-align: center;
+	color: white;
+	text-shadow: 2px 2px 2px #000;
+	padding-top: 1rem;
+	position: absolute;
+	font-size: 3rem;
+	background-color: rgba(0, 0, 0, 0.514);
+	position: absolute;
+	width: 20vw;
+	height:  40vh;
+	top: 30%;
+	left: 40%;
+	z-index: 900;
+	border-radius: 10px;
+}
+
+.score {
+	margin-left: auto;
+	margin-right: auto;
+	width: 80%;
+	font-size: 1.5rem;
+}
+
+.data {
+	margin-top: -0.5em;
+	font-size: 1.5rem;
+}
+
+.data input {
+	align-self: center;
+	height: 2rem;
+	outline: none;
+    background-color: #ffffff;
+    color: #1f1a12;
+    display: inline;
+    border-radius: 5px;
+    border-style: none;
+}
+
 .start:before {
 	background-image: url(images/head1.png);
 	background-repeat: no-repeat;
@@ -460,17 +501,17 @@ aside ul {list-style-type: none; margin-left: 0; padding-left: 0; margin-bottom:
 	color: white;
 	text-shadow: 2px 2px 2px #000;
 	position: absolute;
-	font-size: 2em;
+	font-size: 2rem;
 	margin-left: auto;
 	margin-right: auto;
-	width: 20vw;
+	width: 15vw;
 	background-color: #ccc;
 	z-index: 1000;
 	text-align: center;
 	left: 50%;
-	margin-left: -10vw;
-	top: 50%;
-	margin-top: -1em;
+	margin-left: -7.5vw;
+	top: 80%;
+	margin-top: -10rem;
 	font-family: 'Anton';
 	cursor: pointer;
 	border-radius: 20px;

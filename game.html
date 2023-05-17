@@ -1,49 +1,60 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>Assignment 2</title>
-		<link rel="stylesheet" href="game.css" />
-		<script src="game.js"></script>
-	</head>
 
-	<body>
+<head>
+	<title>Assignment 2</title>
+	<link rel="stylesheet" href="game.css" />
+	<script src="game.js"></script>
+</head>
 
-		<div class="hud">
-			<ul class="health">
-				<li></li>
-				<li></li>
-				<li></li>
-			</ul>
+<body>
+
+	<div class="hud">
+		<ul class="health">
+			<li></li>
+			<li></li>
+			<li></li>
+		</ul>
+	</div>
+
+	<div class="scoreCard">
+		High Score
+		<div class="score">
+			<p>PlayerName</p>
+			<p>Score</p>
+		</div>
+		<div class="data name">
+			<label for="newPlayerName">Name</label>
+			<input type="text" name="newPlayerName" id="newPlayerName" required placeholder="Enter your name">
+		</div>
+		
+	</div>
+	<div class="start" id="start">
+		Start
+	</div>
+
+
+	<div id="player" class="character stand down">
+		<div class="head">
 		</div>
 
-		<div class="start" id="start">
-			Start
+		<div class="body">
 		</div>
 
-
-		<div id="player" class="character stand down">
-			<div class="head">
-			</div>
-
-			<div class="body">
-			</div>
-
-			<div class="weapon bow">
-			</div>
+		<div class="weapon bow">
 		</div>
+	</div>
 
-		<div class="solid cactus one"></div>
-		<div class="solid cactus two"></div>
-		<div class="solid cactus three"></div>
-		<div class="solid cactus four"></div>
-		<div class="solid cactus five"></div>
-
-		<!-- <div class="solid tank one"></div>
-		<div class="solid tank two"></div>
-		<div class="solid tank three"></div> -->
+	<div class="solid cactus one"></div>
+	<div class="solid cactus two"></div>
+	<div class="solid cactus three"></div>
+	<div class="solid cactus four"></div>
+	<div class="solid cactus five"></div>
 
 
 
 
-	</body>
+
+</body>
+
 </html>
