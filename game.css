@@ -39,9 +39,7 @@ aside ul {list-style-type: none; margin-left: 0; padding-left: 0; margin-bottom:
 #opponent .head {background-image: url(images/head1.png);}
 
 .tank {background-image: url(images/tank.png);position: absolute; height: 68px; width: 151px; background-size: contain; background-repeat: no-repeat; left: 80%;}
-/* .tank.one {top: 30vh; left: 80%;}
-.tank.two {top: 50vh; left: 80%;}
-.tank.three {top: 70vh; left: 80%;} */
+
 
 
 .enemy {position: absolute;}
@@ -482,6 +480,28 @@ aside ul {list-style-type: none; margin-left: 0; padding-left: 0; margin-bottom:
     border-radius: 5px;
     border-style: none;
 }
+
+.playerScore, 
+.levels{
+	font-family: 'Anton';
+	text-align: center;
+	color: white;
+	text-shadow: 2px 2px 2px #000;
+	margin-top: 1rem;
+	position: absolute;
+	top: 5%;
+    font-size: 2em;
+    left: 93%;
+}
+
+.levels {
+	left: 0%;
+	top: 0%;
+	margin-top: 15px;
+	margin-left: 20px;
+}
+	
+
 
 .start:before {
 	background-image: url(images/head1.png);

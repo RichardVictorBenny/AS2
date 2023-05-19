@@ -1,16 +1,22 @@
+//===GLOBAL VARIABLES===
 var upPressed = false;
 var downPressed = false;
 var leftPressed = false;
 var rightPressed = false;
 var lastPressed = false;
+var attack = false;
+
 
 /* var tanks = 0; */
 var playerHit = 0;
 var hitCheck = false;
 var removedLife = [];
-var tankNumber = 5;
+var tankNumber = 3;
 var playerName = 0;
 var bombCreated = 0;
+var levelHandler = 0;
+var levelNumber = 1;
+
 
 function myLoadFunction() {
 	highScore()
@@ -19,9 +25,6 @@ function myLoadFunction() {
 	for (let i = 0; i < tankNumber; i++) {
 		makeTanks();
 	}
-
-
-
 }
 
 
@@ -37,7 +40,6 @@ function startGame() {
 		if (playerNameCheck(newPlayerName)) {
 			launchGame();
 		} else {
-			var textBox = document.getElementById('newPlayerName');
 			textBox.value = '';
 		}
 
@@ -51,15 +53,6 @@ function launchGame() {
 
 	scoreCard.style.display = 'none';
 	start.style.display = 'none';
-
-	/* do {
-		//alert('enter name to play!');
-		
-		//var newPlayerName = window.prompt('Enter  username: ', 'player');
-	} while (newPlayerName == null || newPlayerName == '');
- */
-	playerNameCheck(newPlayerName);
-
 	playerHit = 0;
 
 	playerDefPos();
@@ -71,30 +64,28 @@ function launchGame() {
 
 	positionTime = setInterval(positionTanks, 1000);
 
+
 }
 
-function playerNameCheck(newPlayerName) {
+function playerNameCheck(newPlayerName) {//CHECKS IF THE NAME IS ALREADY IN LOCAL STORAGE
 
 	if (localStorage[newPlayerName] == null) {
-
 		playerName = newPlayerName;
 		return true;
-
 	} else {
 		alert('name already exists');
 		return false;
-
-
-		/* do {
-			var newPlayerName = window.prompt('Enter different username: ', 'player');
-		} while (newPlayerName == null || newPlayerName == ''); */
-		//playerNameCheck(newPlayerName);
 	}
 }
 
 
-function keyup(event) {
+function keyup(event) {		//==ARROW KEY CONTROL===
 	var player = document.getElementById('player');
+
+	if (event.keyCode == 32) {
+		attack = false;
+
+	}
 	if (event.keyCode == 37) {
 		leftPressed = false;
 		lastPressed = 'left';
@@ -113,10 +104,16 @@ function keyup(event) {
 	}
 
 	player.className = 'character stand ' + lastPressed;
+
+
+
 }
 
 
 function keydown(event) {
+	if (event.keyCode == 32) {
+		attack = true;
+	}
 	if (event.keyCode == 37) {
 		leftPressed = true;
 	}
@@ -129,20 +126,20 @@ function keydown(event) {
 	if (event.keyCode == 40) {
 		downPressed = true;
 	}
+
 }
 
 function move() {
 	var player = document.getElementById('player');
 	var positionLeft = player.offsetLeft;
 	var positionTop = player.offsetTop;
-	var playerW = player.offsetWidth;
-	var playerH = player.offsetHeight;
+	var playerWidth = player.offsetWidth;
+	var playerHeight = player.offsetHeight;
 
 	let check = collision(player.offsetTop, player.offsetLeft, 'explosion', player.offsetWidth, player.offsetHeight);
 
 	if (check == false) {
 		hitCheck = true;
-
 		if (playerHit == 3) {
 			gameOver();
 		} else {
@@ -152,49 +149,168 @@ function move() {
 
 
 	if (downPressed) {
-		var newTop = positionTop + 3;// for testing purpose
-
-		let check = collision(newTop, positionLeft, 'solid', playerW, playerH);
+		var newTop = positionTop + 1;
+		if (newTop>(window.innerHeight-playerHeight-1)) {
+			newTop=window.innerHeight-playerHeight-1;
+		}
+		let check = collision(newTop, positionLeft, 'solid', playerWidth, playerHeight);
 		if (check) {
 			player.style.top = newTop + 'px';
 		}
-
 		animation('character walk down');
 	}
 	if (upPressed) {
-		var newTop = positionTop - 3;// for testing purpose
-
-		let check = collision(newTop, positionLeft, 'solid', playerW, playerH);
+		var newTop = positionTop - 1;
+		if (newTop<0) {
+			newTop=0;
+		}
+		let check = collision(newTop, positionLeft, 'solid', playerWidth, playerHeight);
 		if (check) {
 			player.style.top = newTop + 'px';
 		}
-
 		animation('character walk up');
 	}
 	if (leftPressed) {
-		var newLeft = positionLeft - 3;// for testing purpose
+		
+		var newLeft = positionLeft - 1;
+		if (newLeft<0) {
+			newLeft =0;
+		}
 		player.className = 'character walk left';
-
-		let check = collision(positionTop, newLeft, 'solid', playerW, playerH);
+		let check = collision(positionTop, newLeft, 'solid', playerWidth, playerHeight);
 		if (check) {
 			player.style.left = newLeft + 'px';
-
 		}
-
-
 	}
 	if (rightPressed) {
-		var newLeft = positionLeft + 3;// for testing purpose
+		var newLeft = positionLeft + 1;
+		if (newLeft>(window.innerWidth-playerWidth-1)) {
+			newLeft = window.innerWidth-playerWidth-1;
+		}
 		player.className = 'character walk right';
-
-		let check = collision(positionTop, newLeft, 'solid', playerW, playerH);
+		let check = collision(positionTop, newLeft, 'solid', playerWidth, playerHeight);
 		if (check) {
 			player.style.left = newLeft + 'px';
-
 		}
-
 	}
 
+	if (attack) {
+		player.classList.add('fire');
+
+		var arrow = document.createElement('div');
+		arrow.className = 'arrow';
+
+
+
+		if (leftPressed) {		//===ARROW KEY CONTROL FOR ARROW
+			var arrowNewLeft = positionLeft;
+			var arrowNewTop = positionTop + 25;
+			positionArrows(arrow, arrowNewLeft, arrowNewTop, 'left');
+			setInterval(function () {
+				arrowNewLeft--;
+				if (arrowNewLeft<0) {
+					arrowNewLeft =0;
+				}
+				if (arrowNewLeft > 0 || arrowNewTop > 0) {
+					let check = collision(arrowNewTop, arrowNewLeft, 'bomb', arrow.offsetWidth, arrow.offsetHeight);
+					if (check) {
+						arrow.style.left = arrowNewLeft + 'px';
+					} else {
+						console.log('hit')
+						arrow.remove();
+					}
+
+				}
+				if (arrowNewLeft == 0) {
+					arrow.remove();
+				}
+			}, 10)
+
+		}
+		if (rightPressed) {
+			var arrowNewLeft = positionLeft + playerWidth;
+			var arrowNewTop = positionTop + 25;
+			positionArrows(arrow, arrowNewLeft, arrowNewTop, 'right');
+			setInterval(function () {
+				arrowNewLeft++;
+				if (arrowNewLeft>(window.innerWidth-arrow.offsetWidth-1)){
+					arrowNewLeft = window.innerWidth-arrow.offsetWidth-1;
+				}
+				if (((arrowNewLeft + arrow.offsetWidth) < window.innerWidth) || ((arrowNewTop + arrow.offsetHeight) < window.innerHeight)) {
+					let check = collision(arrowNewTop, arrowNewLeft, 'bomb', arrow.offsetWidth, arrow.offsetHeight);
+					if (check) {
+						arrow.style.left = arrowNewLeft + 'px';
+					} else {
+						arrow.remove();
+					}
+				}
+				if (arrowNewLeft + arrow.offsetWidth == window.innerWidth-1 || (arrowNewTop + arrow.offsetHeight == window.innerHeight-1)) {
+					arrow.remove();
+				}
+			}, 10)
+		}
+		if (upPressed) {
+			var arrowNewLeft = positionLeft + (playerWidth / 2);
+			var arrowNewTop = positionTop;
+			positionArrows(arrow, arrowNewLeft, arrowNewTop, 'up');
+			setInterval(function () {
+				arrowNewTop--;
+				if (arrowNewTop<0){
+					arrowNewTop = 0;
+				}
+				if (arrowNewTop > 0 || arrowNewLeft > 0) {
+					let check = collision(arrowNewTop, arrowNewLeft, 'bomb', arrow.offsetWidth, arrow.offsetHeight);
+					if (check) {
+						arrow.style.top = arrowNewTop + 'px';
+					} else {
+						arrow.remove();
+					}
+
+				}
+				if (arrowNewTop == 0) {
+					arrow.remove();
+				}
+			}, 10)
+		}
+		if (downPressed) {
+			var arrowNewLeft = positionLeft + (playerWidth / 2);
+			var arrowNewTop = positionTop + playerHeight;
+			positionArrows(arrow, arrowNewLeft, arrowNewTop, 'down');
+			setInterval(function () {
+				arrowNewTop++;
+
+				if (arrowNewTop > (window.innerHeight-arrow.offsetHeight-1)){
+					arrowNewTop = window.innerHeight-arrow.offsetHeight-1;
+				}
+				if (arrowNewTop + arrow.offsetHeight < window.innerHeight || ((arrowNewLeft + arrow.offsetWidth) < window.innerWidth)) {
+					let check = collision(arrowNewTop, arrowNewLeft, 'bomb', arrow.offsetWidth, arrow.offsetHeight);
+					if (check) {
+						arrow.style.top = arrowNewTop + 'px';
+					} else {
+						console.log('hit')
+						arrow.remove();
+					}
+				}
+				if (arrowNewTop + arrow.offsetHeight == window.innerHeight-1 || (arrowNewLeft + arrow.offsetWidth == window.innerWidth-1)) {
+					arrow.remove();
+				}
+			}, 10)
+		}
+
+
+		document.body.append(arrow);
+
+		clearInterval(timeout);
+		setTimeout(function () {
+			timeout = setInterval(move, 10);
+		}, 500);
+	}
+}
+
+function positionArrows(arrow, arrowNewLeft, arrowNewTop, dir) {
+	arrow.classList.add(dir)
+	arrow.style.top = arrowNewTop + 'px';
+	arrow.style.left = arrowNewLeft + 'px';
 }
 
 function animation(que) {
@@ -203,7 +319,6 @@ function animation(que) {
 			player.className = que;
 		}
 	}
-
 }
 
 function makeTanks() {
@@ -212,37 +327,55 @@ function makeTanks() {
 	tank.classList.add('solid');
 	document.body.appendChild(tank);
 	tank.style.top = Math.ceil(Math.random() * 100) + '%';
-
 }
 
 function positionTanks() {
 	var tanks = document.getElementsByClassName('tank');
+	var playerScore = document.getElementsByClassName('playerScore')[0];
+	var levels = document.getElementsByClassName('levels')[0];
 
 	for (var i = 0; i < tanks.length; i++) {
 		var random = Math.ceil(Math.random() * 95);
 		tanks[i].style.top = random + '%';
-
 		var bomb = document.createElement('div');
 		bomb.className = 'bomb';
 		bomb.style.left = tanks[i].offsetLeft + 'px';
 		bomb.style.top = tanks[i].offsetTop + 10 + 'px';
 		document.body.appendChild(bomb);
 		bombCreated++;
+		levelHandler++;
+		playerScore.innerText = bombCreated;
 
 		moveBomb(bomb);
+	}
 
+	if (levelHandler >= 100) {
+
+		levelHandler = 0;
+		levelNumber++;
+		levels.innerHTML = 'level ' + levelNumber;
+		makeTanks();
 	}
 }
 
 function moveBomb(bomb) {
 	var left = bomb.offsetLeft;
+	var top = bomb.offsetTop;
 	var speed = Math.ceil(Math.random() * 10)
 	var fuseLength = Math.ceil(Math.random() * left)
-	setInterval(function () {
-		//left--;
-		left -= 2; // for testing purpose
+	var randomTwo = Math.ceil(Math.random() * 2);
+	var angle = Math.random();
+
+	movingbombs = setInterval(function () {
+		left--;
+		if (randomTwo == 1) {
+			top -= angle;
+		} else {
+			top += angle;
+		}
 		if (left > fuseLength) {
 			bomb.style.left = left + 'px';
+			bomb.style.top = top + 'px';
 		} else {
 			bomb.className = 'explosion';
 			setTimeout(function () {
@@ -252,6 +385,7 @@ function moveBomb(bomb) {
 	}, speed);
 
 }
+
 
 function collision(top, left, cls, width, height) {
 	var topLeft = document.elementFromPoint(left, top);
@@ -263,9 +397,7 @@ function collision(top, left, cls, width, height) {
 		(topRight.classList.contains(cls) == false) &&
 		(bottomLeft.classList.contains(cls) == false) &&
 		(bottomRight.classList.contains(cls) == false)) {
-
 		return true;
-
 	} else {
 		return false;
 	}
@@ -278,6 +410,18 @@ function noMovement() {
 	leftPressed = false;
 }
 
+function hitAnimation(cls) {
+	if (leftPressed) {
+		player.className = cls + ' left';
+	} else if (rightPressed) {
+		player.className = cls + ' right';
+	} else if (upPressed) {
+		player.className = cls + ' up';
+	} else if (downPressed) {
+		player.className = cls + ' down';
+	}
+}
+
 function hit() {
 	clearInterval(timeout);
 	clearInterval(positionTime);
@@ -285,24 +429,8 @@ function hit() {
 		playerHit++;
 	}
 
-	//animating character hit
-	if (leftPressed) {
-		player.className = 'character hit left';
-		//console.log('hit left');
-	} else if (rightPressed) {
-		player.className = 'character hit right';
-		//console.log('hit right');
-	} else if (upPressed) {
-		player.className = 'character hit up';
-		//console.log('hit up');
-	} else if (downPressed) {
-		player.className = 'character hit down';
-		//console.log('hit down');
-	}
-
+	hitAnimation('character hit');
 	noMovement();
-
-
 	setTimeout(function () {
 		let life = document.getElementsByTagName('li')[0];
 		removedLife.push(life.parentNode.removeChild(life));
@@ -310,29 +438,31 @@ function hit() {
 		timeout = setInterval(move, 10);
 		positionTime = setInterval(positionTanks, 3000);
 	}, 500)
-
 }
 
-
-
-
 function gameOver() {
+	levelNumber = 1;
+	var levels = document.getElementsByClassName('levels')[0];
+	levels.innerHTML = 'level ' + levelNumber;
+	var tank = document.getElementsByClassName('tank');
+	console.log(tank.length)
+	for (var i = 0; i < tank.length; i++) {
+		document.body.removeChild(tank[i]);
+	}
+
 	clearInterval(timeout);
+	clearInterval(movingbombs);
 	clearInterval(positionTime);
-
 	noMovement();
-
 	localStorage.setItem(playerName, bombCreated);
 	bombCreated = 0;
 
 	highScore();
-
 	document.removeEventListener('keydown', keydown);
 	document.removeEventListener('keyup', keyup);
-
 	player.className = 'character dead';
-
 	alert('YOU\'RE DEAD');
+
 	let life = document.getElementsByClassName('health')[0];
 	for (var i = 0; i < removedLife.length; i++) {
 		life.appendChild(removedLife[i]);
@@ -340,10 +470,14 @@ function gameOver() {
 
 	var scoreCard = document.getElementsByClassName('scoreCard')[0];
 	var bttn = document.getElementsByClassName('start')[0];
+	var data = document.getElementsByClassName('data')[0];
+	let newNewPlayerName = data.getElementsByTagName('input')[0].value;
+	playerName = newNewPlayerName;
 	scoreCard.style.display = 'block';
 	bttn.style.display = 'block';
 	bttn.firstChild.nodeValue = 'Play Again?';
 
+	bttn.addEventListener('click', function () { location.reload(); })
 }
 
 function playerDefPos() {
