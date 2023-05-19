@@ -22,15 +22,14 @@ function myLoadFunction() {
 	highScore()
 	var start = document.getElementsByClassName('start')[0];
 	start.addEventListener('click', startGame);
-	for (let i = 0; i < tankNumber; i++) {
-		makeTanks();
-	}
+	
 }
 
 
 document.addEventListener('DOMContentLoaded', myLoadFunction);
 
 function startGame() {
+	
 	var textBox = document.getElementById('newPlayerName');
 	var newPlayerName = textBox.value;
 
@@ -48,6 +47,10 @@ function startGame() {
 }
 
 function launchGame() {
+
+	for (let i = 0; i < tankNumber; i++) {
+		makeTanks();
+	}
 	var scoreCard = document.getElementsByClassName('scoreCard')[0];
 	var start = document.getElementsByClassName('start')[0];
 
@@ -136,8 +139,7 @@ function move() {
 	var playerWidth = player.offsetWidth;
 	var playerHeight = player.offsetHeight;
 
-	let check = collision(player.offsetTop, player.offsetLeft, 'explosion', player.offsetWidth, player.offsetHeight);
-
+	let check = collision(positionTop,positionLeft,'ball',playerWidth,playerHeight);
 	if (check == false) {
 		hitCheck = true;
 		if (playerHit == 3) {
@@ -149,7 +151,7 @@ function move() {
 
 
 	if (downPressed) {
-		var newTop = positionTop + 1;
+		var newTop = positionTop + 3;
 		if (newTop>(window.innerHeight-playerHeight-1)) {
 			newTop=window.innerHeight-playerHeight-1;
 		}
@@ -160,7 +162,7 @@ function move() {
 		animation('character walk down');
 	}
 	if (upPressed) {
-		var newTop = positionTop - 1;
+		var newTop = positionTop - 3;
 		if (newTop<0) {
 			newTop=0;
 		}
@@ -172,7 +174,7 @@ function move() {
 	}
 	if (leftPressed) {
 		
-		var newLeft = positionLeft - 1;
+		var newLeft = positionLeft - 3;
 		if (newLeft<0) {
 			newLeft =0;
 		}
@@ -183,7 +185,7 @@ function move() {
 		}
 	}
 	if (rightPressed) {
-		var newLeft = positionLeft + 1;
+		var newLeft = positionLeft + 3;
 		if (newLeft>(window.innerWidth-playerWidth-1)) {
 			newLeft = window.innerWidth-playerWidth-1;
 		}
@@ -196,11 +198,8 @@ function move() {
 
 	if (attack) {
 		player.classList.add('fire');
-
 		var arrow = document.createElement('div');
 		arrow.className = 'arrow';
-
-
 
 		if (leftPressed) {		//===ARROW KEY CONTROL FOR ARROW
 			var arrowNewLeft = positionLeft;
@@ -216,10 +215,8 @@ function move() {
 					if (check) {
 						arrow.style.left = arrowNewLeft + 'px';
 					} else {
-						console.log('hit')
 						arrow.remove();
 					}
-
 				}
 				if (arrowNewLeft == 0) {
 					arrow.remove();
@@ -287,7 +284,6 @@ function move() {
 					if (check) {
 						arrow.style.top = arrowNewTop + 'px';
 					} else {
-						console.log('hit')
 						arrow.remove();
 					}
 				}
@@ -338,7 +334,7 @@ function positionTanks() {
 		var random = Math.ceil(Math.random() * 95);
 		tanks[i].style.top = random + '%';
 		var bomb = document.createElement('div');
-		bomb.className = 'bomb';
+		bomb.className = 'bomb ball';
 		bomb.style.left = tanks[i].offsetLeft + 'px';
 		bomb.style.top = tanks[i].offsetTop + 10 + 'px';
 		document.body.appendChild(bomb);
@@ -353,7 +349,7 @@ function positionTanks() {
 
 		levelHandler = 0;
 		levelNumber++;
-		levels.innerHTML = 'level ' + levelNumber;
+		levels.innerHTML = 'Level ' + levelNumber;
 		makeTanks();
 	}
 }
@@ -368,6 +364,7 @@ function moveBomb(bomb) {
 
 	movingbombs = setInterval(function () {
 		left--;
+		
 		if (randomTwo == 1) {
 			top -= angle;
 		} else {
@@ -377,7 +374,7 @@ function moveBomb(bomb) {
 			bomb.style.left = left + 'px';
 			bomb.style.top = top + 'px';
 		} else {
-			bomb.className = 'explosion';
+			bomb.className = 'explosion ball';
 			setTimeout(function () {
 				bomb.remove();
 			}, 2000);
@@ -387,21 +384,31 @@ function moveBomb(bomb) {
 }
 
 
-function collision(top, left, cls, width, height) {
+function collision(top,left,cls,width,height) {
 	var topLeft = document.elementFromPoint(left, top);
 	var topRight = document.elementFromPoint(left + width, top);
 	var bottomLeft = document.elementFromPoint(left, top + height);
 	var bottomRight = document.elementFromPoint(left + width, top + height);
+	var midTop = document.elementFromPoint(left + (width / 2), top);
+	var midBottom = document.elementFromPoint(left + (width / 2), top + height);
+	var midLeft = document.elementFromPoint(left, top + (height / 2));
+	var midRight = document.elementFromPoint(left + width, top + (height / 2))
 
 	if ((topLeft.classList.contains(cls) == false) &&
 		(topRight.classList.contains(cls) == false) &&
 		(bottomLeft.classList.contains(cls) == false) &&
-		(bottomRight.classList.contains(cls) == false)) {
+		(bottomRight.classList.contains(cls) == false) &&
+		(midBottom.classList.contains(cls) == false) &&
+		(midTop.classList.contains(cls) == false) &&
+		(midLeft.classList.contains(cls) == false) &&
+		(midRight.classList.contains(cls) == false)){
 		return true;
 	} else {
 		return false;
 	}
 }
+
+
 
 function noMovement() {
 	downPressed = false;
@@ -443,15 +450,17 @@ function hit() {
 function gameOver() {
 	levelNumber = 1;
 	var levels = document.getElementsByClassName('levels')[0];
-	levels.innerHTML = 'level ' + levelNumber;
+	levels.innerHTML = 'Level ' + levelNumber;
+
 	var tank = document.getElementsByClassName('tank');
-	console.log(tank.length)
+
+
 	for (var i = 0; i < tank.length; i++) {
 		document.body.removeChild(tank[i]);
 	}
 
 	clearInterval(timeout);
-	clearInterval(movingbombs);
+	//clearInterval(movingbombs);
 	clearInterval(positionTime);
 	noMovement();
 	localStorage.setItem(playerName, bombCreated);

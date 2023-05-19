@@ -539,12 +539,12 @@ aside ul {list-style-type: none; margin-left: 0; padding-left: 0; margin-bottom:
 }
 .explosion {
 	width: 128px;
-	height: 160px;
 	position: absolute;
 	top: 88vw;
 	left: 300px;
 	margin-left: -64px;
 	margin-top: 0px;
+	padding-top: 67px;
 }
 
 .explosion:before {
